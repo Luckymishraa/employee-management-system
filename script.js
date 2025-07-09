@@ -2,6 +2,12 @@ const form = document.getElementById("employeeForm");
 const employeeList = document.getElementById("employeeList");
 
 const employees =[];
+// load from localstorage
+const savedEmployees = localStorage.getItem("employees");
+if(savedEmployees){
+    employees.push(...JSON.parse(savedEmployees));
+    renderEmployees();
+}
 
 form.addEventListener("submit", function(e){
     e.preventDefault();
@@ -25,6 +31,7 @@ form.addEventListener("submit", function(e){
     };
 
     employees.push(employee);
+    localStorage.setItem("employees", JSON.stringify(employees)); //save here
     form.reset();
     renderEmployees();
 })
@@ -51,6 +58,7 @@ function renderEmployees() {
         // Add delete logic
         card.querySelector(".delete-btn").addEventListener("click", () =>{
             employees.splice(index, 1); //remove from array
+            localStorage.setItem("employees", JSON.stringify(employees));
             renderEmployees(); //re-render UI
         });
 
@@ -65,6 +73,7 @@ function renderEmployees() {
 
             // remove the old one and allow re-submitting
             employees.splice(index, 1);
+            localStorage.setItem("employees", JSON.stringify(employees)) //save update
             renderEmployees();
         })
         employeeList.appendChild(card)
