@@ -32,15 +32,41 @@ form.addEventListener("submit", function(e){
 function renderEmployees() {
     employeeList.innerHTML = "";
 
-    employees.forEach(emp => {
+    employees.forEach((emp, index )=> {
         const card = document.createElement("div");
 
-        card.className = "bg-white p-4 rounded-xl shadow hover:shadow-lg transition border-l-4 border-gray-500";
+        card.className = "bg-white p-4 mb-4 rounded-xl shadow hover:shadow-lg transition border-l-4 border-gray-500 flex justify-between items-start gap-4";
         card.innerHTML = `
         <h2 class="text-xl font-semibold"> ${emp.name} </h2>
         <p class="text-gray-600"> ${emp.position} - ${emp.department} </p>
-        <p class="text-green-600 font-bold"> ${emp.salary}  </p> `;
+        <p class="text-green-600 font-bold"> ${emp.salary}  </p>
+        </div>
+        <div class="flex gap-2"> 
+             <button class="edit-btn text-blue-500 hover:text-blue-700 text-xl">✏️ </button>
+             <button class="delete-btn text-red-500 hover:text-red-700 text-xl"> 🗑️ </button>
+        </div>
+        `;
 
+
+        // Add delete logic
+        card.querySelector(".delete-btn").addEventListener("click", () =>{
+            employees.splice(index, 1); //remove from array
+            renderEmployees(); //re-render UI
+        });
+
+        // add Edit logic
+
+        card.querySelector(".edit-btn").addEventListener("click", () =>{
+            document.getElementById("name").value = emp.name;
+            document.getElementById("position").value = emp.position;
+            document.getElementById("department").value = emp.department;
+            document.getElementById("salary").value = emp.salary.replace("₹", "");
+            
+
+            // remove the old one and allow re-submitting
+            employees.splice(index, 1);
+            renderEmployees();
+        })
         employeeList.appendChild(card)
     });
 }
