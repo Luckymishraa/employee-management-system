@@ -42,6 +42,27 @@ document.getElementById("searchInput").addEventListener("input", (e)=>{
     renderEmployees(searchTerm)
 })
 
+function updateSummary(list) {
+    const summaryBox = document.getElementById("summary");
+
+    if(list.length === 0){
+        summaryBox.textContent = "No employees to summarize.";
+        return;
+    }
+
+    const totalSalary = list.reduce((sum,emp) =>{
+        const numericSalary = parseInt(emp.salary.replace("₹", "").replace(/,/g/ ""));
+        return sum + numericSalary;
+    }, 0);
+
+    const avgSalary = totalSalary / list.length;
+    summaryBox.innerHTML= `
+    Total Employees: ${list.length} |
+    Total Salary: ₹${totalSalary.toLocaleString()} |
+    Average Salary: ₹${Math.round(avgSalary).toLocaleString()}
+    `
+}
+
 function renderEmployees(searchTerm = "") {
     employeeList.innerHTML = "";
 
@@ -69,6 +90,7 @@ function renderEmployees(searchTerm = "") {
         </div>
         `;
 
+    updateSummary(filtered); //pass filtered list
 
         // Add delete logic
         card.querySelector(".delete-btn").addEventListener("click", () =>{
