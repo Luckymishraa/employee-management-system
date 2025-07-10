@@ -27,7 +27,8 @@ form.addEventListener("submit", function(e){
         name,
         position,
         department,
-        salary: `₹${salary}`
+        salary: `₹${salary}`,
+        present : true //Default
     };
 
     employees.push(employee);
@@ -56,10 +57,13 @@ function updateSummary(list) {
     }, 0);
 
     const avgSalary = totalSalary / list.length;
+    const presentCount = list.filter(emp => emp.present).length 
     summaryBox.innerHTML= `
     Total Employees: ${list.length} |
     Total Salary: ₹${totalSalary.toLocaleString()} |
     Average Salary: ₹${Math.round(avgSalary).toLocaleString()}
+    <br>
+    Present Today: ${presentCount}
     `
 }
 
@@ -78,19 +82,29 @@ function renderEmployees(searchTerm = "") {
     filtered.forEach((emp, index )=> {
         const card = document.createElement("div");
 
-        card.className = "bg-white p-4 mb-4 rounded-xl shadow hover:shadow-lg transition border-l-4 border-gray-500 flex justify-between items-start gap-4";
+        card.className = ` w-full  bg-white p-4 mb-4 rounded-xl shadow hover:shadow-lg transition border-l-4 border-gray-500 flex flex-col justify-between gap-4`;
         card.innerHTML = `
         <h2 class="text-xl font-semibold"> ${emp.name} </h2>
         <p class="text-gray-600"> ${emp.position} - ${emp.department} </p>
         <p class="text-green-600 font-bold"> ${emp.salary}  </p>
         </div>
-        <div class="flex gap-2"> 
+        <div class="flex gap-2 items-center">
+        <label class="flex items-center gap-1 text-sm">
+        <input type="checkbox" class="toggle-attendance" ${emp.present ? "checked" : ""}>
+        Present
+ 
+        </label> 
              <button class="edit-btn text-blue-500 hover:text-blue-700 text-xl">✏️ </button>
              <button class="delete-btn text-red-500 hover:text-red-700 text-xl"> 🗑️ </button>
         </div>
         `;
 
     updateSummary(filtered); //pass filtered list
+    card.querySelector(".toggle-attendance").addEventListener("change", (e) =>{
+        emp.present = e.target.checked;
+        localStorage.setItem("employees", JSON.stringify(employees));
+        renderEmployees(document.getElementById("searchInput").value)
+    })
 
         // Add delete logic
         card.querySelector(".delete-btn").addEventListener("click", () =>{
