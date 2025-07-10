@@ -36,10 +36,25 @@ form.addEventListener("submit", function(e){
     renderEmployees();
 })
 
-function renderEmployees() {
+
+document.getElementById("searchInput").addEventListener("input", (e)=>{
+    const searchTerm = e.target.value;
+    renderEmployees(searchTerm)
+})
+
+function renderEmployees(searchTerm = "") {
     employeeList.innerHTML = "";
 
-    employees.forEach((emp, index )=> {
+    const filtered = employees.filter(emp =>{
+        const keyword = searchTerm.toLowerCase();
+        return(
+            emp.name.toLowerCase().includes(keyword) ||
+            emp.position.toLowerCase().includes(keyword) ||
+            emp.department.toLowerCase().includes(keyword)
+        );
+    });
+
+    filtered.forEach((emp, index )=> {
         const card = document.createElement("div");
 
         card.className = "bg-white p-4 mb-4 rounded-xl shadow hover:shadow-lg transition border-l-4 border-gray-500 flex justify-between items-start gap-4";
@@ -59,7 +74,8 @@ function renderEmployees() {
         card.querySelector(".delete-btn").addEventListener("click", () =>{
             employees.splice(index, 1); //remove from array
             localStorage.setItem("employees", JSON.stringify(employees));
-            renderEmployees(); //re-render UI
+
+            renderEmployees(document.getElementById("searchInput").value); //re-render UI
         });
 
         // add Edit logic
@@ -74,7 +90,7 @@ function renderEmployees() {
             // remove the old one and allow re-submitting
             employees.splice(index, 1);
             localStorage.setItem("employees", JSON.stringify(employees)) //save update
-            renderEmployees();
+            renderEmployees(document.getElementById("searchInput").value); //keep filtered value
         })
         employeeList.appendChild(card)
     });
