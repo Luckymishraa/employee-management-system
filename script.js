@@ -9,6 +9,13 @@ if(savedEmployees){
     renderEmployees();
 }
 
+const generateEmployeeID = (function () {
+    let currentID = Date.now();
+    return function () {
+        return ++currentID;
+    }
+}) ();
+
 form.addEventListener("submit", function(e){
     e.preventDefault();
     
